@@ -7,6 +7,7 @@ const router = express.Router();
 
 const posts = require('../controllers/post');
 router.get('/posts', posts.getPosts);
+router.get('/posts/:postId', posts.getPost);
 router.post('/posts', [
     body(['title', 'content'])
     .isString().trim().withMessage('مقدار ورودی حتما باید یک رشته باشد')

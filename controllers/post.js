@@ -1,17 +1,33 @@
 const Post = require('../models/post');
 const { validationResult } = require('express-validator');
 
-exports.getPosts = (req,res)=>{
+exports.getPosts = async(req,res,next)=>{
+  try{
+    const posts = await Post.find();
     res.status(200).json({
-      posts: [
-        {
-          title: "test",
-          content: "test",
-        },
-      ],
-    });
+      message: "Successfully",
+      posts: posts
+    })
+  }catch(err){
+    next(err)
+  }
 }
-
+exports.getPost = async(req,res,next)=>{
+  try{
+    const postId = req.params.postId;
+    const post = await Post.findById(postId).catch(()=>{
+      const error = new Error("Not Found");
+      error.statusCode = 404;
+      throw error;
+    });
+    res.status(200).json({
+      message: "Successfully",
+      post: post
+    })
+  }catch(err){
+    next(err)
+  }
+}
 exports.addPost = async(req,res,next)=>{
   try{
     const validate = validationResult(req);
