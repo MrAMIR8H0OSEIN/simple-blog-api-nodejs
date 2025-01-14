@@ -1,0 +1,24 @@
+{
+  "name": "simple-blog-api-nodejs",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrAMIR8H0OSEIN/simple-blog-api-nodejs.git"
+  },
+  "author": "Amirhosein",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MrAMIR8H0OSEIN/simple-blog-api-nodejs/issues"
+  },
+  "homepage": "https://github.com/MrAMIR8H0OSEIN/simple-blog-api-nodejs#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.5"
+  }
+}
