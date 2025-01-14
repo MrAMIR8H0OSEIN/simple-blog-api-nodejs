@@ -12,32 +12,36 @@ exports.getPosts = (req,res)=>{
     });
 }
 
-exports.addPost = async(req,res)=>{
-  const validate = validationResult(req);
-  if(!validate.isEmpty()){
-    res.status(202).json({
-      message: "validation faild",
-      errors: validate.array()
-    })
-    return;
-  }
-
-  const title = req.body.title;
-  const content = req.body.content;
+exports.addPost = async(req,res,next)=>{
+  try{
+    const validate = validationResult(req);
+    
+    if(!validate.isEmpty()){
+      const error = new Error("validation faild");
+      error.statusCode = 422;
+      error.validate = validate.array();
+      throw error;
+    }
   
-  const newPost = Post({
-    title: title,
-    content: content,
-    imageUrl: "images/sample.png",
-    creator: {
-      name: "Amirhosein Masalegooha",
-    },
-  });
-
-  const result = await newPost.save();
-
-  res.status(200).json({
-      message: "Successfully",
-      post: result
-  })
+    const title = req.body.title;
+    const content = req.body.content;
+    
+    const newPost = Post({
+      title: title,
+      content: content,
+      imageUrl: "images/sample.png",
+      creator: {
+        name: "Amirhosein Masalegooha",
+      },
+    });
+  
+    const result = await newPost.save();
+  
+    res.status(200).json({
+        message: "Successfully",
+        post: result
+    })
+  }catch(err){
+    next(err);
+  }
 }

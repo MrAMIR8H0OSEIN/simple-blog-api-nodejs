@@ -16,6 +16,18 @@ const defaultRoutes = require('./routes/default');
 
 app.use('/',defaultRoutes);
 
+app.use((error,req,res,next)=>{
+  const statuscode = error.statusCode ?? 500;
+  const message = error.message;
+  res.status(statuscode).json({
+    message,
+    error: error
+  })
+  if(statuscode == 500){
+    console.log(error);
+  }
+})
+
 mongoose.connect('mongodb://localhost:27017/blog-api').then(()=>{
     app.listen(80,()=>{
         console.log('starting ...')
