@@ -50,7 +50,7 @@ exports.postAddPost = async(req,res,next)=>{
     const newPost = Post({
       title: title,
       content: content,
-      imageUrl: `/${image.destination}/${image.filename}`,
+      imageUrl: `/${req.file.destination}/${req.file.filename}`,
       creator: {
         name: "Amirhosein Masalegooha",
       },

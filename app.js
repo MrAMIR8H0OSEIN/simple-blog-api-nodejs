@@ -12,7 +12,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
-app.use('files',express.static(path.join(__dirname,'files')))
+app.use('/files',express.static(path.join(__dirname,'files')));
 
 const defaultRoutes = require('./routes/default');
 
