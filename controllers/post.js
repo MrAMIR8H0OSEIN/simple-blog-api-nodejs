@@ -1,7 +1,7 @@
 const Post = require('../models/post');
 const { validationResult } = require('express-validator');
 
-exports.getPosts = async(req,res,next)=>{
+exports.getListPosts = async(req,res,next)=>{
   try{
     const posts = await Post.find();
     res.status(200).json({
@@ -12,7 +12,7 @@ exports.getPosts = async(req,res,next)=>{
     next(err)
   }
 }
-exports.getPost = async(req,res,next)=>{
+exports.getOnePost = async(req,res,next)=>{
   try{
     const postId = req.params.postId;
     const post = await Post.findById(postId).catch(()=>{
@@ -28,7 +28,7 @@ exports.getPost = async(req,res,next)=>{
     next(err)
   }
 }
-exports.addPost = async(req,res,next)=>{
+exports.postAddPost = async(req,res,next)=>{
   try{
     const validate = validationResult(req);
     
@@ -38,14 +38,19 @@ exports.addPost = async(req,res,next)=>{
       error.validate = validate.array();
       throw error;
     }
-  
+    if(!req.file){
+      const error = new Error("Please Upload File");
+      error.statusCode = 422;
+      throw error;
+    }
+
     const title = req.body.title;
     const content = req.body.content;
     
     const newPost = Post({
       title: title,
       content: content,
-      imageUrl: "images/sample.png",
+      imageUrl: `/${image.destination}/${image.filename}`,
       creator: {
         name: "Amirhosein Masalegooha",
       },
