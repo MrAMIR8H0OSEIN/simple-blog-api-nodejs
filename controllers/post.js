@@ -26,7 +26,7 @@ exports.addPost = async(req,res)=>{
 
     const result = await newPost.save();
 
-    res.stauts(200).json({
+    res.status(200).json({
         message: "Successfully",
         post: result
     })
