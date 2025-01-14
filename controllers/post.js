@@ -38,7 +38,8 @@ exports.postAddPost = async(req,res,next)=>{
       error.validate = validate.array();
       throw error;
     }
-    if(!req.file){
+    const image = req.file;
+    if(!image){
       const error = new Error("Please Upload File");
       error.statusCode = 422;
       throw error;
@@ -50,7 +51,7 @@ exports.postAddPost = async(req,res,next)=>{
     const newPost = Post({
       title: title,
       content: content,
-      imageUrl: `/${req.file.destination}/${req.file.filename}`,
+      imageUrl: `/${image.destination}/${image.filename}`,
       creator: {
         name: "Amirhosein Masalegooha",
       },
