@@ -14,9 +14,11 @@ app.use((req, res, next) => {
 });
 app.use('/files',express.static(path.join(__dirname,'files')));
 
-const defaultRoutes = require('./routes/default');
+const postRoutes = require('./routes/post');
+app.use('/posts',postRoutes);
+const authRoutes = require('./routes/auth');
+app.use('/auth',authRoutes);
 
-app.use('/',defaultRoutes);
 
 app.use((error,req,res,next)=>{
   const statuscode = error.statusCode ?? 500;

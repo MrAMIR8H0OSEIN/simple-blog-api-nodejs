@@ -17,6 +17,7 @@
   "homepage": "https://github.com/MrAMIR8H0OSEIN/simple-blog-api-nodejs#readme",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
