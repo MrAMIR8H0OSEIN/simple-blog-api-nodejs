@@ -18,5 +18,6 @@ router.put('/:postId',Authorization,multer.upload(multer.imageFileFilter).single
     .isString().trim().withMessage('مقدار ورودی حتما باید یک رشته باشد')
     .isLength({min: 5}).withMessage('مقدار ورودی حداقل باید 5 کاراکتر داشته باشد'),
 ], posts.putEditPost);
+router.delete('/:postId',Authorization, posts.deleteRemovePost);
 
 module.exports = router;

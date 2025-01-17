@@ -4,7 +4,10 @@ const { deleteFile } = require('../utility/file');
 
 exports.getListPosts = async(req,res,next)=>{
   try{
-    const posts = await Post.find();
+    const posts = await Post.find().populate({
+      path: 'creator',
+      select: ['name'],
+    });
     res.status(200).json({
       message: "Successfully",
       posts: posts
@@ -16,7 +19,10 @@ exports.getListPosts = async(req,res,next)=>{
 exports.getOnePost = async(req,res,next)=>{
   try{
     const postId = req.params.postId;
-    const post = await Post.findById(postId).catch(()=>{
+    const post = await Post.findById(postId).populate({
+      path: 'creator',
+      select: ['name'],
+    }).catch(()=>{
       const error = new Error("Not Found");
       error.statusCode = 404;
       throw error;
@@ -54,20 +60,25 @@ exports.postAddPost = async(req,res,next)=>{
     const title = req.body.title;
     const content = req.body.content;
     
-    const newPost = Post({
+    const newPost = new Post({
       title: title,
       content: content,
       imageUrl: `/${image.destination}/${image.filename}`,
-      creator: {
-        name: "Amirhosein Masalegooha",
-      },
+      creator: req.user._id,
     });
   
     const result = await newPost.save();
+
+    req.user.posts.push(result._id);
+
+    req.user.save();
   
     res.status(201).json({
         message: "Successfully",
-        post: result
+        post: await result.populate({
+          path: 'creator',
+          select: ['name'],
+        })
     })
   }catch(err){
     deleteFile(`/${image.destination}/${image.filename}`);
@@ -87,6 +98,12 @@ exports.putEditPost = async(req,res,next)=>{
     if(!post){
       const error = new Error("Not Found");
       error.statusCode = 404;
+      throw error;
+    }
+
+    if(post.creator.toString() !== req.user._id.toString()){
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
       throw error;
     }
 
@@ -113,10 +130,46 @@ exports.putEditPost = async(req,res,next)=>{
 
     res.status(200).json({
       message: "Successfully",
-      post: result
+      post: await result.populate({
+        path: 'creator',
+        select: ['name'],
+      })
     })
   }catch(err){
     deleteFile(`/${image.destination}/${image.filename}`);
     next(err);
   }
 }
+exports.deleteRemovePost = async(req,res,next)=>{
+  try{
+    const postId = req.params.postId;
+
+    const post = await Post.findByIdAndDelete(postId).catch(()=>{
+      const error = new Error("Not Found");
+      error.statusCode = 404;
+      throw error;
+    });
+    if(!post){
+      const error = new Error("Not Found");
+      error.statusCode = 404;
+      throw error;
+    }
+    if(post.creator.toString() !== req.user._id.toString()){
+      const error = new Error("Unauthorized");
+      error.statusCode = 401;
+      throw error;
+    }
+
+    deleteFile(post.imageUrl);
+
+    req.user.posts.pull(post._id);
+    await req.user.save();
+
+    res.status(200).json({
+      message: "Successfully"
+    })
+
+  }catch(err){
+    next(err);
+  }
+} 
