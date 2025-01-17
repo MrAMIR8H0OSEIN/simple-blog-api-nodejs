@@ -67,7 +67,7 @@ exports.postLogin = async(req,res,next)=>{
             })
         }else{
             const error = new Error("Password Incorrect");
-            error.statusCode = 406;
+            error.statusCode = 401;
             throw error;
         }
     }catch(err){

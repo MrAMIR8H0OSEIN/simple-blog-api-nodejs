@@ -21,6 +21,11 @@ exports.getOnePost = async(req,res,next)=>{
       error.statusCode = 404;
       throw error;
     });
+    if(!post){
+      const error = new Error("Not Found");
+      error.statusCode = 404;
+      throw error;
+    }
     res.status(200).json({
       message: "Successfully",
       post: post
@@ -30,6 +35,7 @@ exports.getOnePost = async(req,res,next)=>{
   }
 }
 exports.postAddPost = async(req,res,next)=>{
+  const image = req.file;
   try{
     const validate = validationResult(req);
     
@@ -39,7 +45,6 @@ exports.postAddPost = async(req,res,next)=>{
       error.validate = validate.array();
       throw error;
     }
-    const image = req.file;
     if(!image){
       const error = new Error("Please Upload File");
       error.statusCode = 422;
@@ -65,11 +70,26 @@ exports.postAddPost = async(req,res,next)=>{
         post: result
     })
   }catch(err){
+    deleteFile(`/${image.destination}/${image.filename}`);
     next(err);
   }
 }
 exports.putEditPost = async(req,res,next)=>{
+  const image = req.file;
   try{
+    const postId = req.params.postId;
+
+    const post = await Post.findById(postId).catch(()=>{
+      const error = new Error("Not Found");
+      error.statusCode = 404;
+      throw error;
+    });
+    if(!post){
+      const error = new Error("Not Found");
+      error.statusCode = 404;
+      throw error;
+    }
+
     const validate = validationResult(req);
 
     if(!validate.isEmpty()){
@@ -79,16 +99,8 @@ exports.putEditPost = async(req,res,next)=>{
       throw error;
     }
     
-    const image = req.file;
-    const postId = req.params.postId;
     const title = req.body.title;
     const content = req.body.content;
-
-    const post = await Post.findById(postId).catch(()=>{
-      const error = new Error("Not Found");
-      error.statusCode = 404;
-      throw error;
-    });
 
     post.title = title;
     post.content = content;
@@ -104,6 +116,7 @@ exports.putEditPost = async(req,res,next)=>{
       post: result
     })
   }catch(err){
+    deleteFile(`/${image.destination}/${image.filename}`);
     next(err);
   }
 }
