@@ -13,7 +13,9 @@ exports.imageFileFilter = (req,file,cb)=>{
     if(file.mimetype.startsWith('image/')){
         cb(null,true);
     }else{
-        cb(new Error("File Format Not Supported"),false);
+        const error = new Error("File Format Not Supported");
+        error.statusCode = 422;
+        cb(error,false);
     }
 }
 
