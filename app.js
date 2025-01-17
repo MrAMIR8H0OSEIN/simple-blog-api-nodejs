@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser =require('body-parser');
 const path = require('path');
+require('dotenv').config();
 
 const app = express();
 
@@ -32,8 +33,8 @@ app.use((error,req,res,next)=>{
   }
 })
 
-mongoose.connect('mongodb://localhost:27017/blog-api').then(()=>{
-    app.listen(80,()=>{
+mongoose.connect(process.env.MONGOOSE_URI).then(()=>{
+    app.listen(process.env.PORT,()=>{
         console.log('starting ...')
     });
 });
